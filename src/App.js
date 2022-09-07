@@ -1,61 +1,43 @@
-import { useState } from "react";
-import { useReducer } from "react";
-import { useEffect } from "react";
+import Navbar from "./components/Navbar";
+import Catalog from "./components/Catalog";
+import Cart from "./components/Cart";
+import { useCity } from "./context";
 
-import reducer from "./reducers/reducer";
-
-const initialState = {
-  people: [],
-  modal: false,
-  modalContent: "",
-};
 function App() {
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const [user, setUser] = useState("");
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!user) {
-      dispatch({ type: "NO-INPUT" });
-      return;
-    }
-    dispatch({ type: "ADD-USER", payload: user });
-    setUser("");
-  };
-
-  useEffect(() => {
-    const timeOut = setTimeout(() => {
-      dispatch({ type: "CLOSE-MODAL" });
-    }, 3000);
-    return () => clearTimeout(timeOut);
-  }, [state.modal]);
+  const { loading } = useCity();
+  if (loading) {
+    return (
+      <>
+        <div className="pt-20">
+          <div className="loading"></div>
+        </div>
+      </>
+    );
+  }
 
   return (
-    <header>
-      <div>
-        <form
-          onSubmit={handleSubmit}
-          style={{ width: "80%", margin: "0 auto" }}
-        >
-          <div style={{ width: "80%", margin: "0 auto" }}>
-            {state.modal && <p>{state.modalContent}</p>}
-            <input
-              type="text"
-              name="user"
-              value={user}
-              onChange={(e) => setUser(e.target.value)}
-              autoComplete="off"
-            />
-            <button type="submit">submit</button>
-          </div>
-        </form>
+    <div className="container mx-auto">
+      {/* <Navbar getTotalAmount={getTotalAmount} /> */}
+      <Navbar />
+      <div className="flex mt-8">
+        <div className="w-8/12">
+          {/* <Catalog
+            products={state.products}
+            handleAddToCart={handleAddToCart}
+          /> */}
+          <Catalog />
+        </div>
+        <div className="bg-white w-4/12">
+          {/* <Cart
+            cart={state.cart}
+            handleAddToCart={handleAddToCart}
+            removeFromCart={removeFromCart}
+            getTotalPrice={getTotalPrice}
+          /> */}
+          <Cart />
+        </div>
       </div>
-      <div>
-        {state.people.map((person, index) => (
-          <p key={index}>{person}</p>
-        ))}
-      </div>
-    </header>
+    </div>
   );
 }
 
